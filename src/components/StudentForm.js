@@ -7,6 +7,7 @@ function StudentForm({ fetchStudents, editingStudent, setEditingStudent }) {
     const [yearLevel, setYearLevel] = useState("");
     const [section, setSection] = useState("");
     const [gender, setGender] = useState("");
+    const isEditing = Boolean(editingStudent);
 
     useEffect(() => {
         if (editingStudent) {
@@ -79,14 +80,14 @@ function StudentForm({ fetchStudents, editingStudent, setEditingStudent }) {
         }
     };
 
-    const handleCancel = () => {
+    const handleCancelEdit = () => {
         setEditingStudent(null);
         resetForm();
     };
 
     return (
         <form onSubmit={handleSubmit} style={{ marginBottom: "20px" }}>
-            <h2>{editingStudent ? "Edit Student" : "Add Student"}</h2>
+            <h2>{isEditing ? "Edit Student" : "Add Student"}</h2>
             <input
                 type="text"
                 placeholder="First Name"
@@ -123,9 +124,9 @@ function StudentForm({ fetchStudents, editingStudent, setEditingStudent }) {
                 value={gender}
                 onChange={(e) => setGender(e.target.value)}
             />
-            <button type="submit">{editingStudent ? "Update Student" : "Add Student"}</button>
-            {editingStudent && (
-                <button type="button" onClick={handleCancel} style={{ marginLeft: "8px" }}>
+            <button type="submit">{isEditing ? "Update Student" : "Add Student"}</button>
+            {isEditing && (
+                <button type="button" onClick={handleCancelEdit} style={{ marginLeft: "8px" }}>
                     Cancel
                 </button>
             )}

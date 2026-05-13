@@ -1,7 +1,9 @@
-import React from "react";
+import React, { useState } from "react";
 
 function StudentList({ students, fetchStudents, setEditingStudent }) {
-    const deleteStudent = async (id) => {
+    const [pendingDeleteId, setPendingDeleteId] = useState(null);
+
+    const confirmDeleteStudent = async (id) => {
         try {
             const response = await fetch(`http://localhost:3000/api/students/${id}`, {
                 method: "DELETE",
@@ -15,6 +17,7 @@ function StudentList({ students, fetchStudents, setEditingStudent }) {
             
             if (result.success) {
                 alert("Student deleted successfully");
+                setPendingDeleteId(null);
                 fetchStudents();
             } else {
                 alert(result.message || "Failed to delete student");
@@ -22,7 +25,15 @@ function StudentList({ students, fetchStudents, setEditingStudent }) {
         } catch (error) {
             alert("Error: " + error.message);
         }
-    }
+    };
+
+    const handleDeleteClick = (id) => {
+        setPendingDeleteId(id);
+    };
+
+    const handleCancelDelete = () => {
+        setPendingDeleteId(null);
+    };
 
     return (
         <div>
@@ -33,7 +44,16 @@ function StudentList({ students, fetchStudents, setEditingStudent }) {
                         <li key={student._id}>
                             {student.firstname} {student.lastname} - {student.course} - Year {student.year_level} - Section {student.section} -
                             <button onClick={() => setEditingStudent(student)}>Edit</button>
-                            <button onClick={() => deleteStudent(student._id)}>Delete</button>
+                            {pendingDeleteId === student._id ? (
+                                <>
+                                    <button onClick={() => confirmDeleteStudent(student._id)}>Confirm Delete</button>
+                                    <button type="button" onClick={handleCancelDelete} style={{ marginLeft: "8px" }}>
+                                        Cancel
+                                    </button>
+                                </>
+                            ) : (
+                                <button onClick={() => handleDeleteClick(student._id)}>Delete</button>
+                            )}
                         </li>
                     ))}
                 </ul>
@@ -42,8 +62,6 @@ function StudentList({ students, fetchStudents, setEditingStudent }) {
             )}
         </div>
     );
-        
 }
-
 
 export default StudentList;
